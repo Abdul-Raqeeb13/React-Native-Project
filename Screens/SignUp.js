@@ -180,7 +180,7 @@ export default function SignUp( {navigation} ) {
               <Text style={styles.signupBtnText}>Sign Up</Text>
             </TouchableOpacity>
             :
-            <ActivityIndicator animating={true} color={MD2Colors.red800} />
+            <ActivityIndicator animating={true} color={'#663399'} />
              }
               
               <TouchableOpacity  onPress={() => signInuser()} style={styles.signinBtn}>

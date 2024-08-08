@@ -5,6 +5,7 @@ import SplashScreen from '../Screens/SplashScreen';
 import SignUp from '../Screens/SignUp';
 import AppIntro from '../Screens/AppIntro';
 import SignIn from '../Screens/SignIn';
+import Home from '../Screens/Home';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,11 @@ export default Navigation = () => {
         }}  />
 
          <Stack.Screen name="SignIn" component={SignIn}
+          options={{
+            headerShown : false
+        }}  />
+
+         <Stack.Screen name="Home" component={Home}
           options={{
             headerShown : false
         }}  />

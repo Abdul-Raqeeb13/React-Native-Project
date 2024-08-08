@@ -4,6 +4,8 @@ import { Text, TextInput } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
 import { ActivityIndicator, MD2Colors } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 export default function SignUp({ navigation }) {
 
@@ -27,28 +29,47 @@ export default function SignUp({ navigation }) {
             auth().signInWithEmailAndPassword(email, password)
                 .then(async (UserCredential) => {
 
-                    console.log(UserCredential.user);
+                    let LoginuserID = UserCredential.user.uid;
 
-                    errorMessageShow("success", 'User signed in!')
-                    setbtnState(true)
 
-                    setEmail("");
-                    setPassword("");
+                    database()
+                        .ref(`Users/${LoginuserID}`)
+                        .once('value')
+                        .then(async snapshot => {
+                            // console.log('User data: ', snapshot.val());
+                            const LoginUserData = {
+                                LoginUsername: snapshot.val().UserName,
+                                LoginUserEmail: snapshot.val().UserEmail,
+                                LoginUserpassword: snapshot.val().UserPassword,
+                                LoginUserProfile: snapshot.val().UserProfile,
 
-                    navigation.navigate('SignIn')
+                            }
+
+                             const jsonValue = JSON.stringify(LoginUserData);
+                            //  console.log(jsonValue);
+                            await AsyncStorage.setItem('LoginUserDetails', jsonValue);
+                            errorMessageShow("success", 'User signed in!')
+                            setbtnState(true)
+
+                            setEmail("");
+                            setPassword("");
+
+                            navigation.navigate('Home')
+                        })
+                        .catch(error => {
+                            setbtnState(true)
+                            if (error.code === 'auth/email-already-in-use') {
+                                errorMessageShow("error", 'That email address is already in use!')
+                            }
+
+                            if (error.code === 'auth/invalid-email') {
+                                errorMessageShow("error", 'That email address is invalid!')
+                            }
+                            errorMessageShow("error", error.code)
+
+                        });
                 })
-                .catch(error => {
-                    setbtnState(true)
-                    if (error.code === 'auth/email-already-in-use') {
-                        errorMessageShow("error", 'That email address is already in use!')
-                    }
 
-                    if (error.code === 'auth/invalid-email') {
-                        errorMessageShow("error", 'That email address is invalid!')
-                    }
-                    errorMessageShow("error", error.code)
-
-                });
         }
     };
 
@@ -83,9 +104,9 @@ export default function SignUp({ navigation }) {
                                     <Text style={styles.signupBtnText}>Sign In</Text>
                                 </TouchableOpacity>
                                 :
-                                <ActivityIndicator animating={true} color={MD2Colors.red800} />
+                                <ActivityIndicator size={'medium'} animating={true} color={'#663399'} />
                         }
-                        
+
                         <TouchableOpacity onPress={() => signUpPage()} style={styles.signinBtn}>
                             <Text style={styles.signinBtnText}>Sign Up</Text>
                         </TouchableOpacity>
