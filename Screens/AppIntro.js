@@ -24,8 +24,7 @@ const slides = [
     }
 ];
 
-const AppIntro = ({navigation}) => {
-    // const navigation = useNavigation();
+const AppIntro = ({ navigation }) => {
 
     useEffect(() => {
         setStorage();
@@ -74,7 +73,7 @@ const AppIntro = ({navigation}) => {
 
     const onDone = () => {
         console.log("press");
-        
+
         navigation.replace('SignUp'); // Navigate to the SignUp screen
         console.log("press");
     };

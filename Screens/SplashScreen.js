@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import { Text, View, StyleSheet, Image } from 'react-native'
 
-export default function SplashScreen( {navigation} ) {
+export default function SplashScreen({ navigation }) {
 
-    useEffect(()=>{
+    useEffect(() => {
         setTimeout(() => {
             navigation.replace("AppIntro")
         }, 3000);
-    },[])
+    }, [])
 
     return (
         <>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor : "white"
+        backgroundColor: "white"
     },
 
     image: {
@@ -33,8 +33,8 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        color : "black",
-        fontSize : 25,
-        fontFamily :"serif",
+        color: "black",
+        fontSize: 25,
+        fontFamily: "serif",
     }
 })

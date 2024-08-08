@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../Screens/SplashScreen';
 import SignUp from '../Screens/SignUp';
 import AppIntro from '../Screens/AppIntro';
+import SignIn from '../Screens/SignIn';
 
 const Stack = createNativeStackNavigator();
 
@@ -12,6 +12,7 @@ export default Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        
         <Stack.Screen name="SplashScreen" component={SplashScreen}
         options={{
             headerShown : false
@@ -26,10 +27,11 @@ export default Navigation = () => {
             headerShown : false
         }}  />
 
-        {/* <Stack.Screen name="OnBoarding" component={OnBoarding}
-        options={{
+         <Stack.Screen name="SignIn" component={SignIn}
+          options={{
             headerShown : false
-        }} /> */}
+        }}  />
+
       </Stack.Navigator>
     </NavigationContainer>
   );

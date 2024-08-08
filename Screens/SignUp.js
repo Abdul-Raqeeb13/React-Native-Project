@@ -7,8 +7,12 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
 import storage from '@react-native-firebase/storage';
+import Toast from 'react-native-toast-message';
+import { ActivityIndicator, MD2Colors } from 'react-native-paper';
 
-export default function SignUp() {
+
+export default function SignUp( {navigation} ) {
+
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -20,6 +24,8 @@ export default function SignUp() {
 
   const [file, setfile] = useState("");
 
+  const [btnState , setbtnState ] = useState(true)
+
   const openCamera = () => {
     setVisible(false);
     const option = {
@@ -29,11 +35,11 @@ export default function SignUp() {
 
     launchCamera(option, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled the camera.');
+        errorMessageShow("error" , "User Cancelled the camera")
       } else if (response.error) {
         console.log('Camera Error: ', response.error);
       } else {
-        console.log('Image URI camera: ', response.assets[0].uri);
+        // console.log('Image URI camera: ', response.assets[0].uri);
         setImage(response.assets[0].uri);
       }
     });
@@ -48,11 +54,11 @@ export default function SignUp() {
 
     launchImageLibrary(option, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled the camera.');
+        errorMessageShow("error" , "User Cancelled the camera")
       } else if (response.error) {
         console.log('Camera Error: ', response.error);
       } else {
-        console.log('Image URI: ', response.assets[0].uri);
+        // console.log('Image URI: ', response.assets[0].uri);
         setImage(response.assets[0].uri);
       }
     });
@@ -68,17 +74,25 @@ export default function SignUp() {
   };
 
   const signUpuser = () => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regexForEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var regexForPassword = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
 
     if (name === undefined) {
-      console.warn("Name must be required");
+      errorMessageShow("error" , "Name must be required")
+
     } else if (email === undefined) {
-      console.warn("Email must be required");
-    } else if (!regex.test(email)) {
-      console.warn("Enter valid email");
+      errorMessageShow("error" , "Email must be required")
+
+    } else if (!regexForEmail.test(email)) {
+      errorMessageShow("error" , "Enter valid email")
     } else if (password === undefined) {
-      console.warn("Password must be required");
+      errorMessageShow("error" , "Password must be required")
+    }else if (!regexForPassword.test(password)) {
+      errorMessageShow("error" , "Password contain Number and Special Char min 6 letter")
+    }else if (image === undefined || image === null || image == "") {
+      errorMessageShow("error" , "Profile image required")
     } else {
+      setbtnState(false)
       auth().createUserWithEmailAndPassword(email, password)
         .then(async (UserCredential) => {
           var ProFileLink = await uploadImage();
@@ -93,25 +107,43 @@ export default function SignUp() {
 
           const reference = database().ref(`Users/${UserCredential.user.uid}`);
           await reference.set(userData);
-
-          console.warn('User account created & signed in!');
+          
+          errorMessageShow("success" , 'User account created & signed in!')
+          setbtnState(true)
           setName("");
           setEmail("");
           setPassword("");
+          setImage("")
+          navigation.navigate('SignIn')
         })
         .catch(error => {
           if (error.code === 'auth/email-already-in-use') {
-            console.warn('That email address is already in use!');
+            errorMessageShow("error" , 'That email address is already in use!')
+            setbtnState(true)
           }
 
           if (error.code === 'auth/invalid-email') {
-            console.warn('That email address is invalid!');
+            errorMessageShow("error" , 'That email address is invalid!')
+            setbtnState(true)
           }
 
           console.error(error);
         });
     }
   };
+
+  // navigate to the sign in page
+  const signInuser = () => {
+    navigation.navigate('SignIn')
+  }
+
+  const errorMessageShow = (type , text) => {
+    Toast.show({
+      position:'bottom',
+      type: type,
+      text1: text,
+    });
+  }
 
   return (
     <>
@@ -126,7 +158,7 @@ export default function SignUp() {
             <View style={styles.form}>
               <TextInput style={styles.inp} mode='outlined' label="Name" value={name} onChangeText={(e) => { setName(e) }} />
               <TextInput style={styles.inp} mode='outlined' label="Email" value={email} onChangeText={(e) => { setEmail(e) }} />
-              <TextInput style={styles.inp} mode='outlined' label="Password" value={password} onChangeText={(e) => { setPassword(e) }} />
+              <TextInput style={styles.inp} mode='outlined' label="Password" value={password} onChangeText={(e) => { setPassword(e) }} secureTextEntry={true}/>
               <Text style={styles.text}>Upload Image</Text>
               <TouchableOpacity style={styles.imgView} onPress={showModal}>
                 {
@@ -142,11 +174,16 @@ export default function SignUp() {
                 }
               </TouchableOpacity>
 
+             {
+              btnState ? 
               <TouchableOpacity onPress={() => signUpuser()} style={styles.signupBtn}>
-                <Text style={styles.signupBtnText}>Sign Up</Text>
-              </TouchableOpacity>
+              <Text style={styles.signupBtnText}>Sign Up</Text>
+            </TouchableOpacity>
+            :
+            <ActivityIndicator animating={true} color={MD2Colors.red800} />
+             }
               
-              <TouchableOpacity style={styles.signinBtn}>
+              <TouchableOpacity  onPress={() => signInuser()} style={styles.signinBtn}>
                 <Text style={styles.signinBtnText}>Sign In</Text>
               </TouchableOpacity>
 

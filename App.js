@@ -1,7 +1,6 @@
 import React, {useState , useEffect} from 'react'
-import { Text } from 'react-native'
 import Navigation from './Config/Navigation'
-import SignUp from './Screens/SignUp'
+import Toast from 'react-native-toast-message';
 
 
 export default function App() {
@@ -10,9 +9,7 @@ export default function App() {
   return (
     <>
       <Navigation/>
-     
-      
-     
+      <Toast />
 
     </>
   )
