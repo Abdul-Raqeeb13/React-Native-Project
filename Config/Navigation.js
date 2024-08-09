@@ -1,60 +1,131 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import DrawerContent from './DrawerContent';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import SplashScreen from '../Screens/SplashScreen';
 import SignUp from '../Screens/SignUp';
 import AppIntro from '../Screens/AppIntro';
 import SignIn from '../Screens/SignIn';
 import Home from '../Screens/Home';
+import CustomAppBar from '../Components/CustomAppBar';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-export default Navigation = () => {
+const DrawerNavigation = () => {
+  const [userName, setUserName] = useState('');
+  const [userProfile, setUserProfile] = useState('');
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const jsonValue = await AsyncStorage.getItem('LoginUserDetails');
+        if (jsonValue != null) {
+          const data = JSON.parse(jsonValue);
+          setUserName(data.LoginUsername);
+          setUserProfile(data.LoginUserProfile);
+          console.log(data.LoginUserProfile);
+
+        }
+      } catch (error) {
+        console.error('Failed to load username from AsyncStorage', error);
+      }
+    };
+
+    fetchUserName();
+  }, []);
+
+  return (
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerTitle: () => (
+            <>
+              <View style={styles.appBar}>
+                <View style={styles.userInfo}>
+                  <Text style={styles.userName}>{userName}</Text>
+                </View>
+                <Image source={{ uri: userProfile }} style={styles.profileImage} />
+              </View>
+            </>
+
+          ), // Display username in header title
+          headerStyle: {
+            backgroundColor: '#663399',
+          },
+        }}
+      />
+    </Drawer.Navigator>
+  );
+};
+
+export default function Navigation() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-
-        <Stack.Screen name="SplashScreen" component={SplashScreen}
-          options={{
-            headerShown: false
-          }} />
-        <Stack.Screen name="AppIntro" component={AppIntro}
-          options={{
-            headerShown: false
-          }} />
-
-        <Stack.Screen name="SignUp" component={SignUp}
-          options={{
-            headerShown: false
-          }} />
-
-        <Stack.Screen name="SignIn" component={SignIn}
-          options={{
-            headerShown: false
-          }} />
-
-        <Stack.Screen name="DrawerNavigator" component={DrawerNavigation}
-          options={{
-            headerShown: false
-          }} />
-
+        <Stack.Screen
+          name="SplashScreen"
+          component={SplashScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="AppIntro"
+          component={AppIntro}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SignIn"
+          component={SignIn}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DrawerNavigator"
+          component={DrawerNavigation}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
+const styles = StyleSheet.create({
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
 
-const DrawerNavigation = () => {
-  return(
-    <Drawer.Navigator initialRouteName="Home" > 
-      <Drawer.Screen name="Home" component={Home} options={{
-        
-      }}/>
-      
-      {/* <Drawer.Screen name="About" component={About} /> */}
-  </Drawer.Navigator>
-  )
-}
+  appBar: {
+    height: 55,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // backgroundColor: 'red',
+    width: Dimensions.get('window').width - 70, // Set the width to 100% of the screen
+  },
+  userInfo: {
+    flex: 1, // This will take up the remaining space between the toggle button and the profile image
+    alignItems: 'center', // Center the username text
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 20
+
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff', // Ensuring the text color is visible against the background
+  },
+});
