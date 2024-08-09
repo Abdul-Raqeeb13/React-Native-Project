@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View,  StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomDrawerToggleButton from './DrawerToggleButton';
-
+import { Modal, Portal, Text, Button, PaperProvider } from 'react-native-paper';
+import Home from '../Screens/Home';
 const CustomAppBar = ({ navigation, route, options, ...rest }) => {
+
+  // const [visible, setVisible] = React.useState(false);
+
+  // const showModal = () => setVisible(true);
+  // const hideModal = () => setVisible(false);
+  // const containerStyle = {backgroundColor: 'yellow', padding: 20};
+
+
+
   const [userName, setUserName] = useState('');
   const [userProfile, setUserProfile] = useState('');
 
   useEffect(() => {
+
     const fetchUserData = async () => {
       try {
         const jsonValue = await AsyncStorage.getItem('LoginUserDetails');
@@ -24,27 +35,44 @@ const CustomAppBar = ({ navigation, route, options, ...rest }) => {
     fetchUserData();
   }, []);
 
+
   return (
+
+    <>
+  {/* <PaperProvider> */}
+
     <View style={styles.appBar}>
-      <View style={styles.userInfo}>
-        <Text style={styles.userName}>{userName}</Text>
-      </View>
-      <Image source={{ uri: userProfile }} style={styles.profileImage} />
+    <View style={styles.userInfo}>
+      <Text style={styles.userName}>{userName}</Text>
     </View>
+    <TouchableOpacity>
+    <Image source={{ uri: userProfile }} style={styles.profileImage} />
+    </TouchableOpacity>
+  </View>
+
+    {/* <Portal>
+      <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
+        <Text>Example Modal.  Click outside this area to dismiss.</Text>
+      </Modal>
+    </Portal>
+   
+  </PaperProvider> */}
+
+
+  </>
+
   );
 };
 
 const styles = StyleSheet.create({
   appBar: {
-    height: 60,
+    height:56,
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
-    // paddingHorizontal: 10,
-    backgroundColor: '#663399',
-    width: Dimensions.get('window').width-15, // Set the width to 100% of the screen
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    // backgroundColor: '#C0C6C7',
+    width: Dimensions.get('window').width-70, // Set the width to 100% of the screen
+    // borderBottomWidth: 1,
+    // backgroundColor: 'red',
   },
   userInfo: {
     flex: 1, // This will take up the remaining space between the toggle button and the profile image

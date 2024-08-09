@@ -26,9 +26,10 @@ const slides = [
 
 const AppIntro = ({ navigation }) => {
 
+
     useEffect(() => {
         setStorage();
-        console.log("useEffect app intro run");
+        // console.log("useEffect app intro run");
     }, []);
 
     const setStorage = async () => {

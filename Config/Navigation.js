@@ -1,68 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { Modal, Portal, Text, Button, PaperProvider } from 'react-native-paper';
 import SplashScreen from '../Screens/SplashScreen';
 import SignUp from '../Screens/SignUp';
 import AppIntro from '../Screens/AppIntro';
 import SignIn from '../Screens/SignIn';
 import Home from '../Screens/Home';
 import CustomAppBar from '../Components/CustomAppBar';
-
+import Profile from '../Screens/Profile';
+import { DrawerContent } from './DrawerContent';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigation = () => {
-  const [userName, setUserName] = useState('');
-  const [userProfile, setUserProfile] = useState('');
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('LoginUserDetails');
-        if (jsonValue != null) {
-          const data = JSON.parse(jsonValue);
-          setUserName(data.LoginUsername);
-          setUserProfile(data.LoginUserProfile);
-          console.log(data.LoginUserProfile);
-
-        }
-      } catch (error) {
-        console.error('Failed to load username from AsyncStorage', error);
-      }
-    };
-
-    fetchUserName();
-  }, []);
-
-  return (
-    <Drawer.Navigator initialRouteName="Home">
-      <Drawer.Screen
-        name="Home"
-        component={Home}
-        options={{
-          headerTitle: () => (
-            <>
-              <View style={styles.appBar}>
-                <View style={styles.userInfo}>
-                  <Text style={styles.userName}>{userName}</Text>
-                </View>
-                <Image source={{ uri: userProfile }} style={styles.profileImage} />
-              </View>
-            </>
-
-          ), // Display username in header title
-          headerStyle: {
-            backgroundColor: '#663399',
-          },
-        }}
-      />
-    </Drawer.Navigator>
-  );
-};
 
 export default function Navigation() {
   return (
@@ -97,6 +51,83 @@ export default function Navigation() {
     </NavigationContainer>
   );
 }
+
+
+const DrawerNavigation = () => {
+
+
+  // const [visible, setVisible] = React.useState(false);
+
+  // const showModal = () => setVisible(true);
+  // const hideModal = () => setVisible(false);
+  // const containerStyle = {backgroundColor: 'white', padding: 20};
+
+
+  // const [userName, setUserName] = useState('');
+  // const [userProfile, setUserProfile] = useState('');
+
+
+
+
+
+  // useEffect(() => {
+  //   const fetchUserName = async () => {
+  //     try {
+  //       const jsonValue = await AsyncStorage.getItem('LoginUserDetails');
+  //       if (jsonValue != null) {
+  //         const data = JSON.parse(jsonValue);
+  //         setUserName(data.LoginUsername);
+  //         setUserProfile(data.LoginUserProfile);
+  //         console.log(data.LoginUserProfile);
+
+  //       }
+  //     } catch (error) {
+  //       console.error('Failed to load username from AsyncStorage', error);
+  //     }
+  //   };
+
+  //   fetchUserName();
+  // }, []);
+
+  return (
+    <Drawer.Navigator initialRouteName="Home"    drawerContent={props =><DrawerContent {...props} />}>
+      
+      <Drawer.Screen
+        name="Home"
+        component={Home}
+     
+        options={{
+          headerTitle: () => (
+            <CustomAppBar />
+          
+          ), // Display username in header title
+          headerStyle: {
+            backgroundColor: '#0059FF',
+
+          },
+
+
+        }}
+      />
+
+      <Drawer.Screen name="Profile" component={Profile} 
+      
+      options={{
+          headerTitle: () => (
+            <CustomAppBar />
+          ),
+          headerStyle: {
+            backgroundColor: '#663399',
+
+          },
+
+
+        }}/>
+
+    </Drawer.Navigator>
+  );
+};
+
 
 const styles = StyleSheet.create({
   headerTitle: {
