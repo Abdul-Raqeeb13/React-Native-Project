@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet, TouchableHighlight, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Avatar, Modal, Portal, Text, Button, PaperProvider } from 'react-native-paper';
+import Toast from 'react-native-toast-message';
+
 
 export default function Home() {
 
@@ -23,10 +25,11 @@ export default function Home() {
         setUserName(data.LoginUsername)
         setProfilePic(data.LoginUserProfile)
 
-        console.log("Data from home" , data);
+        // console.log("Data from home" , data);
       } 
       catch (error) {
-        console.error('Failed to load user data from AsyncStorage', error);
+        // console.error('Failed to load user data from AsyncStorage', error);
+        errorMessageShow("error" , 'Failed to load user data from AsyncStorage')
       }
     }
      
@@ -34,12 +37,16 @@ export default function Home() {
     fetchUserData();
   }, []);
 
+  const errorMessageShow = (type , text) => {
+    Toast.show({
+      position:'bottom',
+      type: type,
+      text1: text,
+    });
+  }
 
-  // const ProfileView = () => {
-  //   console.log("click");
-    
-  // }
   return (
+
     
     <PaperProvider>
     <View style={styles.container}>

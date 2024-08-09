@@ -31,7 +31,6 @@ export default function SignUp({ navigation }) {
 
                     let LoginuserID = UserCredential.user.uid;
 
-
                     database()
                         .ref(`Users/${LoginuserID}`)
                         .once('value')
@@ -48,13 +47,14 @@ export default function SignUp({ navigation }) {
                              const jsonValue = JSON.stringify(LoginUserData);
                             //  console.log(jsonValue);
                             await AsyncStorage.setItem('LoginUserDetails', jsonValue);
-                            errorMessageShow("success", 'User signed in!')
+                            errorMessageShow("success", 'Signed in success!')
                             setbtnState(true)
 
-                            setEmail("");
-                            setPassword("");
+                            // setEmail("");
+                            // setPassword("");
 
-                            navigation.navigate('Home')
+                            // navigation.navigate('Home')
+                            navigation.navigate('DrawerNavigator');
                         })
                         .catch(error => {
                             setbtnState(true)

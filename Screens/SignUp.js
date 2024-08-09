@@ -108,7 +108,7 @@ export default function SignUp( {navigation} ) {
           const reference = database().ref(`Users/${UserCredential.user.uid}`);
           await reference.set(userData);
           
-          errorMessageShow("success" , 'User account created & signed in!')
+          errorMessageShow("success" , 'Account cretaed successfully!')
           setbtnState(true)
           setName("");
           setEmail("");
@@ -127,7 +127,8 @@ export default function SignUp( {navigation} ) {
             setbtnState(true)
           }
 
-          console.error(error);
+          // console.error(error);
+          errorMessageShow("error" , error.code)
         });
     }
   };
